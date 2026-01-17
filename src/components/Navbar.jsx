@@ -2,7 +2,7 @@ import { MenuIcon, XIcon } from "lucide-react";
 import { useState } from "react";
 import { motion } from "motion/react";
 
-import { NavLink } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { navlinks } from "../constants";
 
 export default function Navbar() {
@@ -24,9 +24,9 @@ export default function Navbar() {
 
                 <div className="hidden md:flex items-center gap-8 transition duration-500">
                     {navlinks.map((link) => (
-                        <NavLink key={link.name} to={link.href} className="hover:text-pink-500 transition">
+                        <Link key={link.name} to={link.href} className="hover:text-pink-500 transition">
                             {link.name}
-                        </NavLink>
+                        </Link>
                     ))}
                 </div>
 
@@ -40,9 +40,9 @@ export default function Navbar() {
 
             <div className={`fixed inset-0 z-100 bg-black/40 backdrop-blur flex flex-col items-center justify-center text-lg gap-8 md:hidden transition-transform duration-400 ${isOpen ? "translate-x-0" : "-translate-x-full"}`}>
                 {navlinks.map((link) => (
-                    <NavLink key={link.name} to={link.href} onClick={() => setIsOpen(false)}>
+                    <Link key={link.name} to={link.href} onClick={() => setIsOpen(false)}>
                         {link.name}
-                    </NavLink>
+                    </Link>
                 ))}
                 <button onClick={() => setIsOpen(false)} className="active:ring-3 active:ring-white aspect-square size-10 p-1 items-center justify-center bg-pink-600 hover:bg-pink-700 transition text-white rounded-md flex">
                     <XIcon />

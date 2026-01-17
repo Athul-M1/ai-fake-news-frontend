@@ -55,7 +55,7 @@ const SearchInput = ({
   const baseLayerStyle = {
     position: 'absolute',
     overflow: 'hidden',
-    borderRadius: '12px',
+    borderRadius: '16px',
     filter: 'blur(3px)',
     top: '50%',
     left: '50%',
@@ -114,8 +114,8 @@ const SearchInput = ({
       <div 
         style={{
           position: 'relative',
-          width: '314px',
-          height: '70px',
+          width: '700px',
+          height: '200px',
         }}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
@@ -123,8 +123,8 @@ const SearchInput = ({
         {/* Glow Layer */}
         <div style={{
           ...baseLayerStyle,
-          width: '354px',
-          height: '130px',
+          width: '780px',
+          height: '300px',
           filter: 'blur(30px)',
           opacity: 0.4,
         }}>
@@ -135,8 +135,8 @@ const SearchInput = ({
         {[1, 2, 3].map((index) => (
           <div key={index} style={{
             ...baseLayerStyle,
-            width: '312px',
-            height: '65px',
+            width: '690px',
+            height: '185px',
           }}>
             <div style={conicGradientStyle(gradients.darkBorder, getRotation('darkBorder', isHovered))} />
           </div>
@@ -145,9 +145,9 @@ const SearchInput = ({
         {/* White Layer */}
         <div style={{
           ...baseLayerStyle,
-          width: '307px',
-          height: '63px',
-          borderRadius: '10px',
+          width: '680px',
+          height: '180px',
+          borderRadius: '14px',
           filter: 'blur(2px)',
         }}>
           <div style={{
@@ -159,9 +159,9 @@ const SearchInput = ({
         {/* Border Layer */}
         <div style={{
           ...baseLayerStyle,
-          width: '303px',
-          height: '59px',
-          borderRadius: '11px',
+          width: '670px',
+          height: '170px',
+          borderRadius: '15px',
           filter: 'blur(0.5px)',
         }}>
           <div style={{
@@ -173,18 +173,17 @@ const SearchInput = ({
         {/* Input Container */}
         <div style={{
           position: 'absolute',
-          width: '301px',
-          height: '56px',
+          width: '665px',
+          height: '165px',
           top: '50%',
           left: '50%',
           transform: 'translate(-50%, -50%)',
           backgroundColor: '#010201',
-          borderRadius: '10px',
+          borderRadius: '14px',
           overflow: 'hidden',
         }}>
-          <input
+          <textarea
             ref={inputRef}
-            type="text"
             value={internalValue}
             onChange={handleChange}
             onKeyPress={handleKeyPress}
@@ -198,12 +197,17 @@ const SearchInput = ({
               backgroundColor: 'transparent',
               border: 'none',
               color: 'white',
-              paddingLeft: '59px',
-              paddingRight: '20px',
-              fontSize: '18px',
+              padding: '20px 30px',
+              fontSize: '20px',
               outline: 'none',
               opacity: disabled ? 0.5 : 1,
               cursor: disabled ? 'not-allowed' : 'text',
+              resize: 'none',
+              fontFamily: 'system-ui, -apple-system, sans-serif',
+              overflowY: 'hidden',
+              overflowX: 'hidden',
+              wordWrap: 'break-word',
+              whiteSpace: 'pre-wrap',
               ...inputStyle,
             }}
           />
@@ -212,10 +216,10 @@ const SearchInput = ({
           {!isFocused && (
             <div style={{
               position: 'absolute',
-              width: '100px',
-              height: '20px',
-              top: '18px',
-              left: '70px',
+              width: '150px',
+              height: '30px',
+              top: '25px',
+              left: '120px',
               background: 'linear-gradient(90deg, transparent, black)',
               pointerEvents: 'none',
             }} />
@@ -224,38 +228,16 @@ const SearchInput = ({
           {/* Pink Mask */}
           <div style={{
             position: 'absolute',
-            width: '30px',
-            height: '20px',
-            top: '10px',
-            left: '5px',
+            width: '50px',
+            height: '30px',
+            top: '15px',
+            left: '10px',
             background: '#cf30aa',
             filter: 'blur(20px)',
             opacity: isHovered ? 0 : 0.8,
             pointerEvents: 'none',
             transition: 'opacity 2s',
           }} />
-
-          {/* Search Icon */}
-          <div style={{
-            position: 'absolute',
-            left: '20px',
-            top: '50%',
-            transform: 'translateY(-50%)',
-          }}>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              strokeWidth="2"
-              strokeLinejoin="round"
-              strokeLinecap="round"
-            >
-              <circle cx="11" cy="11" r="8" stroke="#b6a9b7" />
-              <line x1="16.65" y1="16.65" x2="22" y2="22" stroke="#837484" />
-            </svg>
-          </div>
         </div>
       </div>
     </div>
