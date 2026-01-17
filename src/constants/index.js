@@ -1,8 +1,8 @@
 export const navlinks = [
     { name: "Home", href: "/" },
     { name: "Perdict", href: "/predict" },
-    { name: "About", href: "#about" },
-    { name: "How It Works", href: "#how-it-works" },
+    { name: "About", href: "/about" },
+    { name: "How It Works", href: "/how-it-works" }
 ];
 
 export const footerData= [

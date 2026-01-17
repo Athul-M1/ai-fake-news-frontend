@@ -2,6 +2,7 @@
 import { CheckIcon} from "lucide-react";
 // import TiltedImage from "../components/TiltImage";
 import { motion } from "motion/react";
+import { Link } from "react-router-dom";
 
 export default function Home() {
     const specialFeatures = [
@@ -45,9 +46,11 @@ export default function Home() {
                 viewport={{ once: true }}
                 transition={{ type: "spring", stiffness: 320, damping: 70, mass: 1 }}
             >
-                <button className="bg-pink-600 hover:bg-pink-700 text-white rounded-full px-7 h-11">
-                    Get started
-                </button>
+                <Link to={'/predict'}>
+                    <button className="bg-pink-600 hover:bg-pink-700 text-white rounded-full px-7 h-11">
+                        Get started
+                    </button>
+                </Link>
               
             </motion.div>
 

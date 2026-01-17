@@ -7,22 +7,40 @@ import axios from "axios"
 const Predict = () => {
   const [newsText, setNewsText] = useState('');
   const [result, setResult] = useState(null);
+  const [mockResult, setmockResult] = useState(null);
+
   const [loading, setLoading] = useState(false);
-  // const apiUrl = import.meta.env.VITE_API_URL;
 
   const HandleAnalyzeNews = async () => {
+    setLoading(true);
+     await new Promise(resolve => setTimeout(resolve, 2000));
     const reqbody = {
       "title": "Breaking News",
       "article": newsText
     }
+    
+  const dummy = {
+
+        analysis: {
+          credibility: (Math.random() * 40 + 60).toFixed(0),
+          sentiment: Math.random() > 0.5 ? 'Neutral' : 'Emotional',
+          sourceQuality: (Math.random() * 40 + 60).toFixed(0),
+        }
+      };
+      
+      setmockResult(dummy);
     try{
       const response = await axios.post(
       `${import.meta.env.VITE_API_URL}/predict`,
       reqbody
     );
-      console.log(response)
+      setResult(response.data)
+      console.log(response.data)
     }catch(err){
       console.log(err)
+    }
+    finally{
+      setLoading(false)
     }
   };
 
@@ -162,7 +180,7 @@ const Predict = () => {
                     transition={{ duration: 0.5, delay: 0.2 }}
                   >
                     <motion.div 
-                      className={`${result.prediction === 'Real' ? 'bg-green-500/20' : 'bg-red-500/20'} p-4 rounded-full`}
+                      className={`${result.label === 'REAL' ? 'bg-green-500/20' : 'bg-red-500/20'} p-4 rounded-full`}
                       initial={{ scale: 0, rotate: -180 }}
                       animate={{ scale: 1, rotate: 0 }}
                       transition={{ 
@@ -172,7 +190,7 @@ const Predict = () => {
                         delay: 0.3
                       }}
                     >
-                      {result.prediction === 'Real' ? (
+                      {result.label === 'REAL' ? (
                         <CheckCircle className="text-green-500" size={48} />
                       ) : (
                         <AlertCircle className="text-red-500" size={48} />
@@ -189,13 +207,13 @@ const Predict = () => {
                       </motion.div>
                       <motion.div 
                         className={`text-4xl font-bold ${
-                          result.prediction === 'Real' ? 'text-green-500' : 'text-red-500'
+                          result.label === 'REAL' ? 'text-green-500' : 'text-red-500'
                         }`}
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.5 }}
                       >
-                        {result.prediction} News
+                        {result.label} News
                       </motion.div>
                     </div>
                   </motion.div>
@@ -239,20 +257,20 @@ const Predict = () => {
                   { 
                     icon: TrendingUp, 
                     title: 'Credibility', 
-                    value: result.analysis.credibility,
+                    value: mockResult.analysis.credibility,
                     hasBar: true
                   },
                   { 
                     icon: Users, 
                     title: 'Sentiment', 
-                    value: result.analysis.sentiment,
+                    value: mockResult.analysis.sentiment,
                     hasBar: false,
                     subtitle: 'Tone Analysis'
                   },
                   { 
                     icon: Clock, 
                     title: 'Source Quality', 
-                    value: result.analysis.sourceQuality,
+                    value: mockResult.analysis.sourceQuality,
                     hasBar: true
                   },
                 ].map((metric, index) => (

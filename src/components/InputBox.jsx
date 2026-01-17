@@ -216,11 +216,11 @@ const SearchInput = ({
           {!isFocused && (
             <div style={{
               position: 'absolute',
-              width: '150px',
+              width: '250px',
               height: '30px',
               top: '25px',
               left: '120px',
-              background: 'linear-gradient(90deg, transparent, black)',
+              // background: 'linear-gradient(90deg, transparent, black)',
               pointerEvents: 'none',
             }} />
           )}
