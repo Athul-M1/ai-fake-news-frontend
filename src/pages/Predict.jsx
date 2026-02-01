@@ -1,62 +1,195 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { AlertCircle, CheckCircle, Loader2, Shield, TrendingUp, Clock, Users } from 'lucide-react';
+import { AlertCircle, CheckCircle, Loader2, Shield, TrendingUp, Clock, Users, XCircle } from 'lucide-react';
 import SearchInput from '../components/InputBox';
-import axios from "axios"
+import axios from "axios";
+import { toast, Bounce } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Predict = () => {
   const [newsText, setNewsText] = useState('');
   const [result, setResult] = useState(null);
-  const [mockResult, setmockResult] = useState(null);
-
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   const HandleAnalyzeNews = async () => {
-    setLoading(true);
-     await new Promise(resolve => setTimeout(resolve, 2000));
-    const reqbody = {
-      "title": "Breaking News",
-      "article": newsText
+    // Validate input
+    if (!newsText.trim()) {
+      toast.error('Please enter news text to analyze', {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+        transition: Bounce,
+      });
+      return;
     }
-    
-  const dummy = {
 
-        analysis: {
-          credibility: (Math.random() * 40 + 60).toFixed(0),
-          sentiment: Math.random() > 0.5 ? 'Neutral' : 'Emotional',
-          sourceQuality: (Math.random() * 40 + 60).toFixed(0),
-        }
-      };
+    setLoading(true);
+    setError(null);
+    setResult(null);
+
+    try {
+      // Remove the artificial delay unless you really need it
+      // await new Promise(resolve => setTimeout(resolve, 2000));
       
-      setmockResult(dummy);
-    try{
+      const reqbody = {
+        "text": newsText
+      };
+
       const response = await axios.post(
-      `${import.meta.env.VITE_API_URL}/predict`,
-      reqbody
+        `${import.meta.env.VITE_API_URL}/analyze`,
+        reqbody,
+        
+      );
+
+      // Handle different response statuses
+      if (response.status === 200) {
+        setResult(response.data);
+        
+        // Show success toast based on prediction
+        if (response.data?.prediction === 'Fake') {
+          toast.warning('News appears to be suspicious!', {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "dark",
+            transition: Bounce,
+          });
+        } else {
+          toast.success(' News appears to be authentic!', {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "dark",
+            transition: Bounce,
+          });
+        }
+        
+        console.log('Analysis Result:', response.data);
+      } 
+      else if (response.status === 400) {
+        throw new Error('Invalid input. Please check your news text.');
+      }
+      else if (response.status === 429) {
+        throw new Error('Too many requests. Please try again later.');
+      }
+      else if (response.status >= 500) {
+        throw new Error('Server error. Please try again later.');
+      }
+      else {
+        // For other status codes, check if response has data
+        if (response.data && response.data.error) {
+          throw new Error(response.data.error);
+        } else {
+          throw new Error(`Unexpected response: ${response.status}`);
+        }
+      }
+
+    } catch (err) {
+      console.error('Analysis Error:', err);
+      
+      // Set error state for UI display
+      setError({
+        message: err.message || 'Failed to analyze news. Please try again.',
+        isNetworkError: err.code === 'ECONNABORTED' || err.code === 'ERR_NETWORK'
+      });
+      
+      // Show appropriate toast message
+      let errorMessage = '❌ Failed to analyze news. Please try again.';
+      
+      if (err.code === 'ECONNABORTED') {
+        errorMessage = '⏱️ Request timeout. Please try again.';
+      } else if (err.code === 'ERR_NETWORK') {
+        errorMessage = '🌐 Network error. Please check your connection.';
+      } else if (err.message.includes('Invalid input')) {
+        errorMessage = '📝 Invalid input. Please check your news text.';
+      } else if (err.message.includes('Too many requests')) {
+        errorMessage = '🚫 Too many requests. Please try again later.';
+      }
+      
+      toast.error(errorMessage, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+        transition: Bounce,
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Add error display section to your UI (add this after the input section)
+  const renderError = () => {
+    if (!error) return null;
+
+    return (
+      <motion.div
+        className="mt-6 bg-red-500/10 border border-red-500/30 rounded-xl p-6"
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -20 }}
+        transition={{ duration: 0.3 }}
+      >
+        <div className="flex items-center gap-3 mb-3">
+          <XCircle className="text-red-500" size={24} />
+          <h3 className="text-lg font-semibold text-red-400">Analysis Failed</h3>
+        </div>
+        <p className="text-gray-300 mb-4">{error.message}</p>
+        
+        {error.isNetworkError && (
+          <div className="text-sm text-gray-400">
+            Tips:
+            <ul className="list-disc list-inside mt-2 space-y-1">
+              <li>Check your internet connection</li>
+              <li>Verify the API URL is correct</li>
+              <li>Try again in a few moments</li>
+            </ul>
+          </div>
+        )}
+        
+        <motion.button
+          onClick={() => setError(null)}
+          className="mt-4 px-4 py-2 bg-red-500/20 hover:bg-red-500/30 text-red-400 rounded-lg transition-colors"
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+        >
+          Dismiss
+        </motion.button>
+      </motion.div>
     );
-      setResult(response.data)
-      console.log(response.data)
-    }catch(err){
-      console.log(err)
-    }
-    finally{
-      setLoading(false)
-    }
   };
 
   return (
     <div className='w-full min-h-screen bg-black text-white p-6 overflow-x-hidden'>
       <motion.div className="group flex items-center gap-2 rounded-full p-1 pr-3 mt-44  "
-                initial={{ y: -20, opacity: 0 }}
-                whileInView={{ y: 0, opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.2, type: "spring", stiffness: 320, damping: 70, mass: 1 }}
-            >
-                
-                
-            </motion.div>
+        initial={{ y: -20, opacity: 0 }}
+        whileInView={{ y: 0, opacity: 1 }}
+        viewport={{ once: true }}
+        transition={{ delay: 0.2, type: "spring", stiffness: 320, damping: 70, mass: 1 }}
+      >
+
+
+      </motion.div>
       {/* Animated Background Blur Effects */}
-      <motion.div 
+      <motion.div
         className="absolute top-30 -z-10 left-1/4 size-72 bg-pink-600 blur-[300px]"
         animate={{
           scale: [1, 1.2, 1],
@@ -68,7 +201,7 @@ const Predict = () => {
           ease: "easeInOut"
         }}
       />
-      <motion.div 
+      <motion.div
         className="absolute bottom-20 -z-10 right-1/4 size-96 bg-pink-500 blur-[350px] opacity-40"
         animate={{
           scale: [1, 1.3, 1],
@@ -84,13 +217,13 @@ const Predict = () => {
 
       <div className="max-w-5xl mx-auto pt-12">
         {/* Header */}
-        <motion.div 
+        <motion.div
           className="text-center mb-12"
           initial={{ opacity: 0, y: -30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
         >
-          <motion.h1 
+          <motion.h1
             className="text-5xl md:text-6xl font-bold mb-4 bg-linear-to-r from-pink-500 via-pink-400 to-pink-300 bg-clip-text text-transparent"
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -98,7 +231,7 @@ const Predict = () => {
           >
             Fake News Detector
           </motion.h1>
-          <motion.p 
+          <motion.p
             className="text-gray-400 text-lg"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -109,13 +242,13 @@ const Predict = () => {
         </motion.div>
 
         {/* Input Section */}
-        <motion.div 
+        <motion.div
           className="mb-8"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.3 }}
         >
-          <SearchInput 
+          <SearchInput
             placeholder="Paste your news article here..."
             value={newsText}
             onChange={setNewsText}
@@ -129,7 +262,12 @@ const Predict = () => {
               maxHeight: '500px',
             }}
           />
-          
+
+          {/* Error Display */}
+          <AnimatePresence>
+            {renderError()}
+          </AnimatePresence>
+
           <motion.button
             onClick={HandleAnalyzeNews}
             disabled={!newsText.trim() || loading}
@@ -157,7 +295,7 @@ const Predict = () => {
         {/* Results Section */}
         <AnimatePresence mode="wait">
           {result && (
-            <motion.div 
+            <motion.div
               className="mt-12 space-y-6"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -165,7 +303,7 @@ const Predict = () => {
               transition={{ duration: 0.5 }}
             >
               {/* Main Result Card */}
-              <motion.div 
+              <motion.div
                 className="bg-linear-to-br from-gray-900/80 to-black/80 backdrop-blur-sm border border-pink-500/30 rounded-2xl p-8 shadow-2xl"
                 initial={{ opacity: 0, scale: 0.9, y: 30 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -173,31 +311,31 @@ const Predict = () => {
               >
                 <div className="flex flex-col md:flex-row items-center justify-between gap-6">
                   {/* Prediction */}
-                  <motion.div 
+                  <motion.div
                     className="flex items-center gap-4"
                     initial={{ opacity: 0, x: -30 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.5, delay: 0.2 }}
                   >
-                    <motion.div 
-                      className={`${result.label === 'REAL' ? 'bg-green-500/20' : 'bg-red-500/20'} p-4 rounded-full`}
+                    <motion.div
+                      className={`${result?.prediction === 'Real' ? 'bg-green-500/20' : 'bg-red-500/20'} p-4 rounded-full`}
                       initial={{ scale: 0, rotate: -180 }}
                       animate={{ scale: 1, rotate: 0 }}
-                      transition={{ 
+                      transition={{
                         type: "spring",
                         stiffness: 200,
                         damping: 15,
                         delay: 0.3
                       }}
                     >
-                      {result.label === 'REAL' ? (
+                      {result?.prediction === 'Real' ? (
                         <CheckCircle className="text-green-500" size={48} />
                       ) : (
                         <AlertCircle className="text-red-500" size={48} />
                       )}
                     </motion.div>
                     <div>
-                      <motion.div 
+                      <motion.div
                         className="text-sm text-gray-400 mb-1"
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
@@ -205,45 +343,44 @@ const Predict = () => {
                       >
                         Prediction
                       </motion.div>
-                      <motion.div 
-                        className={`text-4xl font-bold ${
-                          result.label === 'REAL' ? 'text-green-500' : 'text-red-500'
-                        }`}
+                      <motion.div
+                        className={`text-4xl font-bold ${result?.prediction === 'Real' ? 'text-green-500' : 'text-red-500'
+                          }`}
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.5 }}
                       >
-                        {result.label} News
+                        {result?.prediction} News
                       </motion.div>
                     </div>
                   </motion.div>
 
                   {/* Confidence */}
-                  <motion.div 
+                  <motion.div
                     className="text-center md:text-right"
                     initial={{ opacity: 0, x: 30 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.5, delay: 0.3 }}
                   >
                     <div className="text-sm text-gray-400 mb-2">Confidence Level</div>
-                    <motion.div 
+                    <motion.div
                       className="text-3xl font-bold text-pink-500 mb-2"
                       initial={{ scale: 0.5, opacity: 0 }}
                       animate={{ scale: 1, opacity: 1 }}
-                      transition={{ 
+                      transition={{
                         type: "spring",
                         stiffness: 200,
                         damping: 10,
                         delay: 0.5
                       }}
                     >
-                      {result.confidence}%
+                      {result?.confidence}%
                     </motion.div>
                     <div className="w-48 bg-gray-800 rounded-full h-2.5 overflow-hidden">
-                      <motion.div 
+                      <motion.div
                         className="bg-linear-to-r from-pink-600 to-pink-400 h-full rounded-full"
                         initial={{ width: 0 }}
-                        animate={{ width: `${result.confidence}%` }}
+                        animate={{ width: `${result?.confidence}%` }}
                         transition={{ duration: 1, delay: 0.6, ease: "easeOut" }}
                       />
                     </div>
@@ -254,37 +391,37 @@ const Predict = () => {
               {/* Analysis Metrics */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {[
-                  { 
-                    icon: TrendingUp, 
-                    title: 'Credibility', 
-                    value: mockResult.analysis.credibility,
+                  {
+                    icon: TrendingUp,
+                    title: 'Credibility',
+                    value: result?.credibility,
                     hasBar: true
                   },
-                  { 
-                    icon: Users, 
-                    title: 'Sentiment', 
-                    value: mockResult.analysis.sentiment,
+                  {
+                    icon: Users,
+                    title: 'Sentiment',
+                    value: result?.sentiment,
                     hasBar: false,
                     subtitle: 'Tone Analysis'
                   },
-                  { 
-                    icon: Clock, 
-                    title: 'Source Quality', 
-                    value: mockResult.analysis.sourceQuality,
+                  {
+                    icon: Clock,
+                    title: 'Source Quality',
+                    value: result?.sourceQuality,
                     hasBar: true
                   },
                 ].map((metric, index) => (
-                  <motion.div 
+                  <motion.div
                     key={metric.title}
                     className="bg-linear-to-br from-gray-900/80 to-black/80 backdrop-blur-sm border border-pink-500/20 rounded-xl p-6"
                     initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ 
-                      duration: 0.5, 
+                    transition={{
+                      duration: 0.5,
                       delay: 0.7 + (index * 0.1),
                       ease: "easeOut"
                     }}
-                    whileHover={{ 
+                    whileHover={{
                       scale: 1.05,
                       borderColor: 'rgba(236, 72, 153, 0.5)',
                       transition: { duration: 0.2 }
@@ -300,7 +437,7 @@ const Predict = () => {
                       </motion.div>
                       <h3 className="text-lg font-semibold text-pink-400">{metric.title}</h3>
                     </div>
-                    <motion.div 
+                    <motion.div
                       className={`${metric.hasBar ? 'text-3xl' : 'text-2xl'} font-bold text-white mb-2`}
                       initial={{ scale: 0.8, opacity: 0 }}
                       animate={{ scale: 1, opacity: 1 }}
@@ -310,7 +447,7 @@ const Predict = () => {
                     </motion.div>
                     {metric.hasBar ? (
                       <div className="w-full bg-gray-800 rounded-full h-2 overflow-hidden">
-                        <motion.div 
+                        <motion.div
                           className="bg-pink-500 h-full rounded-full"
                           initial={{ width: 0 }}
                           animate={{ width: `${metric.value}%` }}

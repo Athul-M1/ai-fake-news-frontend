@@ -39,20 +39,20 @@ export default function Footer() {
             >
                 <p className="max-w-60">Making every customer feel valued—no matter the size of your audience.</p>
                 <div className="flex items-center gap-4 mt-3">
-                    <a href="https://dribbble.com/prebuiltui" target="_blank" rel="noreferrer">
+                    <div>
                         <DribbbleIcon className="size-5 hover:text-pink-500" />
-                    </a>
-                    <a href="https://www.linkedin.com/company/prebuiltui" target="_blank" rel="noreferrer">
+                    </div>
+                    <div >
                         <LinkedinIcon className="size-5 hover:text-pink-500" />
-                    </a>
-                    <a href="https://x.com/prebuiltui" target="_blank" rel="noreferrer">
+                    </div>
+                    <div>
                         <TwitterIcon className="size-5 hover:text-pink-500" />
-                    </a>
-                    <a href="https://www.youtube.com/@prebuiltui" target="_blank" rel="noreferrer">
+                    </div>
+                    <div >
                         <YoutubeIcon className="size-6 hover:text-pink-500" />
-                    </a>
+                    </div>
                 </div>
-                <p className="mt-3 text-center">&copy; {new Date().getFullYear()} <a href="https://prebuiltui.com?utm_source=pixels">Truth Net</a></p>
+                <p className="mt-3 text-center">&copy; {new Date().getFullYear()} <div >Truth Net</div></p>
             </motion.div>
         </footer>
     );
