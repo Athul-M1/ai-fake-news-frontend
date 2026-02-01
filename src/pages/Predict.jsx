@@ -179,7 +179,7 @@ const Predict = () => {
 
   return (
     <div className='w-full min-h-screen bg-black text-white p-6 overflow-x-hidden'>
-      <motion.div className="group flex items-center gap-2 rounded-full p-1 pr-3 mt-44  "
+      <motion.div className="group flex items-center gap-2 rounded-full p-1 pr-3 mt-24  "
         initial={{ y: -20, opacity: 0 }}
         whileInView={{ y: 0, opacity: 1 }}
         viewport={{ once: true }}
