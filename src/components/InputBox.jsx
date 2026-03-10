@@ -62,12 +62,12 @@ const SearchInput = ({
     transform: 'translate(-50%, -50%)',
   };
 
-  const conicGradientStyle = (gradient, rotation = 0, size = 600) => ({
+  const conicGradientStyle = (gradient, rotation = 0, size = 800) => ({
     position: 'absolute',
     top: '50%',
     left: '50%',
-    width: `${size}px`,
-    height: `${size}px`,
+    width: 'max(100%, 400px)',
+    height: 'max(100%, 400px)',
     backgroundImage: gradient,
     backgroundRepeat: 'no-repeat',
     backgroundPosition: '0 0',
@@ -110,12 +110,12 @@ const SearchInput = ({
   const [isHovered, setIsHovered] = useState(false);
 
   return (
-    <div style={containerStyle}>
-      <div 
+    <div style={containerStyle} className="w-full max-w-full">
+      <div
+        className="w-full mx-auto"
         style={{
           position: 'relative',
-          width: '700px',
-          height: '200px',
+          minHeight: inputStyle?.minHeight || '180px',
         }}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
@@ -123,8 +123,8 @@ const SearchInput = ({
         {/* Glow Layer */}
         <div style={{
           ...baseLayerStyle,
-          width: '780px',
-          height: '300px',
+          width: 'min(120%, 800px)',
+          height: '150%',
           filter: 'blur(30px)',
           opacity: 0.4,
         }}>
@@ -135,8 +135,8 @@ const SearchInput = ({
         {[1, 2, 3].map((index) => (
           <div key={index} style={{
             ...baseLayerStyle,
-            width: '690px',
-            height: '185px',
+            width: '99%',
+            height: '92%',
           }}>
             <div style={conicGradientStyle(gradients.darkBorder, getRotation('darkBorder', isHovered))} />
           </div>
@@ -145,8 +145,8 @@ const SearchInput = ({
         {/* White Layer */}
         <div style={{
           ...baseLayerStyle,
-          width: '680px',
-          height: '180px',
+          width: '97%',
+          height: '90%',
           borderRadius: '14px',
           filter: 'blur(2px)',
         }}>
@@ -159,8 +159,8 @@ const SearchInput = ({
         {/* Border Layer */}
         <div style={{
           ...baseLayerStyle,
-          width: '670px',
-          height: '170px',
+          width: '96%',
+          height: '85%',
           borderRadius: '15px',
           filter: 'blur(0.5px)',
         }}>
@@ -173,8 +173,8 @@ const SearchInput = ({
         {/* Input Container */}
         <div style={{
           position: 'absolute',
-          width: '665px',
-          height: '165px',
+          width: '95%',
+          height: '82%',
           top: '50%',
           left: '50%',
           transform: 'translate(-50%, -50%)',
@@ -197,8 +197,8 @@ const SearchInput = ({
               backgroundColor: 'transparent',
               border: 'none',
               color: 'white',
-              padding: '20px 30px',
-              fontSize: '20px',
+              padding: '16px 20px',
+              fontSize: 'clamp(14px, 4vw, 20px)',
               outline: 'none',
               opacity: disabled ? 0.5 : 1,
               cursor: disabled ? 'not-allowed' : 'text',
@@ -212,26 +212,13 @@ const SearchInput = ({
             }}
           />
 
-          {/* Input Mask */}
-          {!isFocused && (
-            <div style={{
-              position: 'absolute',
-              width: '250px',
-              height: '30px',
-              top: '25px',
-              left: '120px',
-              // background: 'linear-gradient(90deg, transparent, black)',
-              pointerEvents: 'none',
-            }} />
-          )}
-
           {/* Pink Mask */}
           <div style={{
             position: 'absolute',
-            width: '50px',
-            height: '30px',
-            top: '15px',
-            left: '10px',
+            width: '40px',
+            height: '24px',
+            top: '12px',
+            left: '8px',
             background: '#cf30aa',
             filter: 'blur(20px)',
             opacity: isHovered ? 0 : 0.8,

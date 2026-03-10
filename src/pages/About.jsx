@@ -6,7 +6,7 @@ export default function About() {
     
 
     return (
-        <div className="relative px-4 md:px-16 lg:px-24 xl:px-32 py-20 mt-24">
+        <div className="relative px-4 sm:px-6 md:px-16 lg:px-24 xl:px-32 py-12 sm:py-16 md:py-20 mt-20 sm:mt-24 overflow-x-hidden">
             {/* Background blur effects */}
             <div className="absolute top-0 right-1/4 size-96 bg-pink-600 blur-[300px] opacity-20 -z-10"></div>
             <div className="absolute bottom-1/4 left-1/4 size-96 bg-pink-600 blur-[300px] opacity-20 -z-10"></div>
@@ -19,10 +19,10 @@ export default function About() {
                 viewport={{ once: true }}
                 transition={{ type: "spring", stiffness: 240, damping: 70 }}
             >
-                <h2 className="text-4xl md:text-5xl font-medium text-center mb-6">
+                <h2 className="text-3xl sm:text-4xl md:text-5xl font-medium text-center mb-4 sm:mb-6">
                     About <span className="move-gradient px-3 rounded-xl">Our Platform</span>
                 </h2>
-                <p className="text-lg text-slate-300 text-center max-w-3xl mx-auto leading-relaxed">
+                <p className="text-base sm:text-lg text-slate-300 text-center max-w-3xl mx-auto leading-relaxed px-2">
                     In an era where misinformation spreads faster than truth, our AI-powered fake news detector 
                     stands as your reliable guardian. We leverage cutting-edge machine learning and sophisticated 
                     rule-based analysis to verify news authenticity, helping you make informed decisions about 
@@ -41,7 +41,7 @@ export default function About() {
                 >
                     Powerful Features
                 </motion.h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                     {features.map((feature, index) => (
                         <motion.div
                             key={index}

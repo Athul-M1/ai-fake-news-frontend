@@ -5,8 +5,13 @@
     --font-poppins: "Poppins", sans-serif;
 }
 
+html {
+    overflow-x: hidden;
+}
+
 body {
     @apply bg-black text-white text-sm antialiased font-poppins;
+    overflow-x: hidden;
 }
 
 body::selection {
